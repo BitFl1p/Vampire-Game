@@ -15,7 +15,13 @@ public class Ragdoll : MonoBehaviour
     }
     private void Update()
     {
-        foreach (Rigidbody limb in limbs) limb.isKinematic = !ragdollEnabled;
+        foreach (Rigidbody limb in limbs) 
+        { 
+            limb.isKinematic = !ragdollEnabled;
+            limb.GetComponent<Collider>().enabled = ragdollEnabled;
+            transform.parent.GetComponent<Collider>().enabled = !ragdollEnabled;
+            transform.parent.GetComponent<Animator>().enabled = !ragdollEnabled;
+        }
         if (punchRagdoll)
         {
             chest.velocity = Vector3.up;
