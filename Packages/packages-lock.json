@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.unity.2d.sprite": {
-      "version": "1.0.0",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {}
-    },
     "com.unity.cinemachine": {
       "version": "2.6.11",
       "depth": 0,
@@ -16,23 +10,6 @@
     "com.unity.collab-proxy": {
       "version": "1.3.9",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.connect.share": {
-      "version": "4.1.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.editorcoroutines": "1.0.0",
-        "com.unity.settings-manager": "1.0.2"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.editorcoroutines": {
-      "version": "1.0.0",
-      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -54,7 +31,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.12",
+      "version": "2.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -63,7 +40,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.vscode": {
-      "version": "1.2.4",
+      "version": "1.2.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -74,23 +51,6 @@
       "depth": 0,
       "source": "registry",
       "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.lego.materials": {
-      "version": "2.2.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.lego.modelimporter": {
-      "version": "6.0.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.textmeshpro": "3.0.4",
-        "com.unity.lego.materials": "2.2.0"
-      },
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
@@ -138,7 +98,7 @@
     },
     "com.unity.settings-manager": {
       "version": "1.0.3",
-      "depth": 0,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -170,7 +130,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.30",
+      "version": "1.1.24",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -181,7 +141,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "3.0.6",
+      "version": "3.0.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -190,7 +150,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.4.8",
+      "version": "1.4.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {

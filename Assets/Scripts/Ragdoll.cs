@@ -21,10 +21,11 @@ public class Ragdoll : MonoBehaviour
             limb.GetComponent<Collider>().enabled = ragdollEnabled;
             transform.parent.GetComponent<Collider>().enabled = !ragdollEnabled;
             transform.parent.GetComponent<Animator>().enabled = !ragdollEnabled;
+            transform.parent.GetComponent<Rigidbody>().isKinematic = ragdollEnabled;
         }
         if (punchRagdoll)
         {
-            chest.velocity = Vector3.up;
+            chest.velocity = Vector3.up * 1.2f;
         }
     }
 }
