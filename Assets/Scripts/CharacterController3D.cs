@@ -57,17 +57,21 @@ public class CharacterController3D : MonoBehaviour
         }
 
         if (enemy && !lockLastFrame && input.Player.LockOn.controls.Any(c => c.IsPressed())) lockedOn = !lockedOn;
+        if (!enemy) lockedOn = false;
         if (lockedOn) 
         {
             CinemachineFreeLook freelook = VirtualCameraSingleton.instance.GetComponent<CinemachineFreeLook>();
             Vector3 toEnemy = (transform.position - enemy.position).normalized;
             float targetAngle = Mathf.Lerp(freelook.m_XAxis.Value, (Mathf.Atan2(-toEnemy.x, -toEnemy.z) * Mathf.Rad2Deg), turnSmoothTime);
+            targetAngle = targetAngle > 180 ? -180 + (180 - targetAngle) : targetAngle < -180 ? 180 - (-180 - targetAngle) : targetAngle;
             freelook.m_XAxis.Value = targetAngle;
             freelook.m_YAxis.Value = .6f;
             VirtualCameraSingleton.instance.GetComponent<CinemachineInputProvider>().XYAxis = null;
+            enemy.GetComponent<Outline>().OutlineWidth = 10;
         }
         else
         {
+            if(enemy) enemy.GetComponent<Outline>().OutlineWidth = 0;
             VirtualCameraSingleton.instance.GetComponent<CinemachineInputProvider>().XYAxis = inputFile;
         }
         //else tGroup.RemoveMember(enemy);
@@ -75,7 +79,12 @@ public class CharacterController3D : MonoBehaviour
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.eulerAngles = new Vector3(0, angle, 0);
+            if(!lockedOn)transform.eulerAngles = new Vector3(0, angle, 0);
+            else
+            {
+                transform.LookAt(enemy);
+                transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+            }
             moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
             // I'm not even gonna try with this one. figure out angles for character to move using weird maths I found on brackeys
         }
@@ -85,20 +94,21 @@ public class CharacterController3D : MonoBehaviour
     {
         Vector2 localVelocity = new Vector2(Vector3.Dot(rb.velocity, transform.right), Vector3.Dot(rb.velocity, transform.forward)); //figure out velocity relative to the player
         Vector2 direction = input.Player.Move.ReadValue<Vector2>(); //get directional input from player
-
-        if (input.Player.Sprint.controls.Any(c => c.IsPressed())) SpeedCalc(direction, maxSprintSpeed); //Sprint
-        else SpeedCalc(direction, maxSpeed); //Walk
+        Vector3 direction3 = new Vector3(direction.x, 0, direction.y);
+        direction3 = Quaternion.Euler(0, cam.eulerAngles.y, 0) * direction3;
+        if (input.Player.Sprint.controls.Any(c => c.IsPressed())) SpeedCalc(direction3, maxSprintSpeed); //Sprint
+        else SpeedCalc(direction3, maxSpeed); //Walk
 
         anim.SetFloat("X", Mathf.Lerp(anim.GetFloat("X"), localVelocity.x, turnSmoothTime)); //animation shit
         anim.SetFloat("Y", Mathf.Lerp(anim.GetFloat("Y"), localVelocity.y, turnSmoothTime));
     }
 
-    void SpeedCalc(Vector2 direction, float maxSpeed)
+    public void SpeedCalc(Vector3 direction, float maxSpeed)
     {
         if (direction.magnitude >= 0.1f) speed += maxSpeed / 10; //if input exists, increase speed
         speed = Drag(speed, maxSpeed / 20); //decrease speed by drag
         speed = SmoothClamp(speed, -maxSpeed, maxSpeed, maxSpeed / 10); //clamp speed to max speed so it doesn't go over
-        rb.velocity = new Vector3(moveDir.x * speed, rb.velocity.y, moveDir.z * speed); //set velocity to speed
+        rb.velocity = new Vector3(direction.x * speed, rb.velocity.y, direction.z * speed); //set velocity to speed
     }
     float Drag(float val, float drag)
     {
