@@ -44,7 +44,7 @@ public class CharacterController3D : MonoBehaviour
         Vector3 direction = new Vector3(input.Player.Move.ReadValue<Vector2>().x, 0, input.Player.Move.ReadValue<Vector2>().y); //get directional input from player and assign it to the right axes
         if (!lockedOn)
         {
-            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit))
+            if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, Mathf.Infinity, cam.gameObject.layer))
             {
                 if (hit.collider.TryGetComponent(out Enemy enemy))
                 {
@@ -67,7 +67,7 @@ public class CharacterController3D : MonoBehaviour
             freelook.m_XAxis.Value = targetAngle;
             freelook.m_YAxis.Value = .6f;
             VirtualCameraSingleton.instance.GetComponent<CinemachineInputProvider>().XYAxis = null;
-            enemy.GetComponent<Outline>().OutlineWidth = 10;
+            enemy.GetComponent<Outline>().OutlineWidth = 10 - Vector3.Distance(enemy.position, transform.position);
         }
         else
         {
