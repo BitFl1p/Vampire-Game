@@ -16,7 +16,9 @@ public class Ragdoll : MonoBehaviour
     private void Update()
     {
         foreach (Rigidbody limb in limbs) 
-        { 
+        {
+            limb.drag = 5;
+            limb.angularDrag = 5;
             limb.isKinematic = !ragdollEnabled;
             limb.GetComponent<Collider>().enabled = ragdollEnabled;
             transform.parent.GetComponent<Collider>().enabled = !ragdollEnabled;
