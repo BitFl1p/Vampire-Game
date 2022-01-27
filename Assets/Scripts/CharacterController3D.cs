@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 
 public class CharacterController3D : MonoBehaviour
 {
+    public int studs;
     public float maxSpeed, maxSprintSpeed;
     //public CinemachineTargetGroup tGroup;
     public Transform cam, enemy;
@@ -21,7 +22,22 @@ public class CharacterController3D : MonoBehaviour
     Rigidbody rb;
     Animator anim;
     InputMaster input;
+    #region Singleton Shit
+    public static CharacterController3D instance;
 
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+        DontDestroyOnLoad(instance);
+    }
+    #endregion
     #region Setup
     void Start()
     {
@@ -41,6 +57,7 @@ public class CharacterController3D : MonoBehaviour
     #endregion
     void Update()
     {
+        UI.instance.studCount.text = studs.ToString().PadLeft(8 - studs.ToString().ToCharArray().Count(), '0');
         Vector3 direction = new Vector3(input.Player.Move.ReadValue<Vector2>().x, 0, input.Player.Move.ReadValue<Vector2>().y); //get directional input from player and assign it to the right axes
         if (!lockedOn)
         {
@@ -67,11 +84,16 @@ public class CharacterController3D : MonoBehaviour
             freelook.m_XAxis.Value = targetAngle;
             freelook.m_YAxis.Value = .6f;
             VirtualCameraSingleton.instance.GetComponent<CinemachineInputProvider>().XYAxis = null;
+            enemy.GetComponent<Outline>().enabled = true;
             enemy.GetComponent<Outline>().OutlineWidth = 10 - Vector3.Distance(enemy.position, transform.position);
         }
         else
         {
-            if(enemy) enemy.GetComponent<Outline>().OutlineWidth = 0;
+            if (enemy)
+            {
+                enemy.GetComponent<Outline>().OutlineWidth = 0;
+                enemy.GetComponent<Outline>().enabled = false;
+            }
             VirtualCameraSingleton.instance.GetComponent<CinemachineInputProvider>().XYAxis = inputFile;
         }
         //else tGroup.RemoveMember(enemy);
