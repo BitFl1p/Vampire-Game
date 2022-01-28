@@ -8,17 +8,22 @@ using UnityEngine.InputSystem;
 
 public class CharacterController3D : MonoBehaviour
 {
+    public GameObject honk;
+    public GameObject trail;
     public int studs;
     public float maxSpeed, maxSprintSpeed;
     //public CinemachineTargetGroup tGroup;
     public Transform cam, enemy;
     public InputActionReference inputFile;
     public float turnSmoothTime;
+    float dashCount;
     public bool lockedOn;
     bool lockLastFrame;
     [HideInInspector] public float speed;
     float turnSmoothVelocity;
+    bool dashed;
     Vector3 moveDir;
+    Vector3 direction3;
     Rigidbody rb;
     Animator anim;
     InputMaster input;
@@ -115,11 +120,39 @@ public class CharacterController3D : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 localVelocity = new Vector2(Vector3.Dot(rb.velocity, transform.right), Vector3.Dot(rb.velocity, transform.forward)); //figure out velocity relative to the player
-        Vector2 direction = input.Player.Move.ReadValue<Vector2>(); //get directional input from player
-        Vector3 direction3 = new Vector3(direction.x, 0, direction.y);
-        direction3 = Quaternion.Euler(0, cam.eulerAngles.y, 0) * direction3;
-        if (input.Player.Sprint.controls.Any(c => c.IsPressed())) SpeedCalc(direction3, maxSprintSpeed); //Sprint
-        else SpeedCalc(direction3, maxSpeed); //Walk
+        if (dashCount < 0)
+        {
+            dashed = false;
+            Vector2 direction = input.Player.Move.ReadValue<Vector2>(); //get directional input from player
+            direction3 = new Vector3(direction.x, 0, direction.y);
+            direction3 = Quaternion.Euler(0, cam.eulerAngles.y, 0) * direction3;
+        }
+        if (input.Player.Dash.controls.Any(c => c.IsPressed()) && !dashed) 
+        {
+            dashed = true;
+            dashCount = 0.5f;
+            speed = maxSprintSpeed * 10;
+            SpeedCalc(direction3, maxSprintSpeed * 10);
+        }
+        else
+        {
+            if (input.Player.Sprint.controls.Any(c => c.IsPressed())) SpeedCalc(direction3, maxSprintSpeed); //Sprint
+            else SpeedCalc(direction3, maxSpeed); //Walk
+        }
+        if (dashCount >= 0) 
+        {
+            trail.SetActive(true);
+            honk.SetActive(false);
+            dashCount -= Time.deltaTime;
+        }
+        else
+        {
+            trail.SetActive(false);
+            honk.SetActive(true);
+        }
+        
+
+
 
         anim.SetFloat("X", Mathf.Lerp(anim.GetFloat("X"), localVelocity.x, turnSmoothTime)); //animation shit
         anim.SetFloat("Y", Mathf.Lerp(anim.GetFloat("Y"), localVelocity.y, turnSmoothTime));
@@ -129,7 +162,7 @@ public class CharacterController3D : MonoBehaviour
     {
         if (direction.magnitude >= 0.1f) speed += maxSpeed / 10; //if input exists, increase speed
         speed = Drag(speed, maxSpeed / 20); //decrease speed by drag
-        speed = SmoothClamp(speed, -maxSpeed, maxSpeed, maxSpeed / 10); //clamp speed to max speed so it doesn't go over
+        speed = SmoothClamp(speed, -maxSpeed, maxSpeed, maxSpeed / 2); //clamp speed to max speed so it doesn't go over
         rb.velocity = new Vector3(direction.x * speed, rb.velocity.y, direction.z * speed); //set velocity to speed
     }
     float Drag(float val, float drag)

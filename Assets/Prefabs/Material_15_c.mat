@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Material_15_c
-  m_Shader: {fileID: -6465566751694194690, guid: 48ccc3f988985f046aafc896d3e64add, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 4a4359006952ae34192cc4ab1098fa12, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -93,7 +93,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_6D42AE5D: 0.06
-    - Vector1_B2B0A39B: 1
+    - Vector1_B2B0A39B: 0.1
     - Vector1_F76D707B: 0
     - _AlphaClip: 0
     - _Blend: 0
