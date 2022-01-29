@@ -23,7 +23,7 @@ public class Stud : MonoBehaviour
                 }*/
                 rect.localPosition = screenPoint;
 
-                Debug.Log(Camera.main.WorldToScreenPoint(transform.position));
+                //Debug.Log(Camera.main.WorldToScreenPoint(transform.position));
                 //rect.localPosition = new Vector3(rect.localPosition.x, rect.localPosition.y, 0);
                 instance.value = value;
                 Destroy(gameObject);

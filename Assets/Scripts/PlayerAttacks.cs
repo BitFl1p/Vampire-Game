@@ -25,9 +25,26 @@ public class PlayerAttacks : MonoBehaviour
     {
         input.Disable();
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out DamageCollider damager) && input.Player.Block.controls.Any(c => c.IsPressed()))
+        {
+            //do block shit
+        }
+    }
     void Update()
     {
-
+        if (input.Player.Sprint.controls.Any(c => c.IsPressed())) return;
+        if (input.Player.Block.controls.Any(c => c.IsPressed())) 
+        { 
+            anim.SetInteger("Attack", 0);
+            anim.SetBool("Block", true);
+            return;
+        }
+        else
+        {
+            anim.SetBool("Block", false);
+        }
         if (!lastPress && input.Player.Attack.controls.Any(c => c.IsPressed()))
         {
             anim.SetInteger("Attack", anim.GetInteger("Attack") + 1);
@@ -40,7 +57,7 @@ public class PlayerAttacks : MonoBehaviour
     }
     void Vel()
     {
-        GetComponent<CharacterController3D>().speed += 1.4f;
+        GetComponent<CharacterController3D>().speed += .6f;
         GetComponent<CharacterController3D>().SpeedCalc(transform.forward, 1);
     }
     void ColliderOn()
