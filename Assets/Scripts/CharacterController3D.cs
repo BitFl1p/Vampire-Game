@@ -62,7 +62,7 @@ public class CharacterController3D : MonoBehaviour
     #endregion
     void Update()
     {
-        UI.instance.studCount.text = studs.ToString().PadLeft(8 - studs.ToString().ToCharArray().Count(), '0');
+        UI.instance.studCount.text = studs.ToString().PadLeft(10 - studs.ToString().ToCharArray().Count(), '0');
         Vector3 direction = new Vector3(input.Player.Move.ReadValue<Vector2>().x, 0, input.Player.Move.ReadValue<Vector2>().y); //get directional input from player and assign it to the right axes
         if (!lockedOn)
         {
@@ -120,7 +120,7 @@ public class CharacterController3D : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 localVelocity = new Vector2(Vector3.Dot(rb.velocity, transform.right), Vector3.Dot(rb.velocity, transform.forward)); //figure out velocity relative to the player
-        if (dashCount < 1 && anim.GetInteger("Attack") == 0)
+        if (dashCount < .6f && anim.GetInteger("Attack") == 0)
         {
             if (dashed2) 
             { 
@@ -131,27 +131,29 @@ public class CharacterController3D : MonoBehaviour
             direction3 = new Vector3(direction.x, 0, direction.y);
             direction3 = Quaternion.Euler(0, cam.eulerAngles.y, 0) * direction3;
         }
-        if (input.Player.Dash.controls.Any(c => c.IsPressed()) && !dashed) 
+        if (input.Player.Dash.controls.Any(c => c.IsPressed()) && !dashed && direction3.magnitude > 0) 
         {
             dashed2 = true;
             dashed = true;
-            dashCount = 1.2f;
-            speed = maxSprintSpeed * 5;
-            SpeedCalc(direction3, maxSprintSpeed * 5);
+            dashCount = .8f;
+            speed = maxSprintSpeed * 3;
+            SpeedCalc(direction3, maxSprintSpeed * 4);
         }
         else
         {
             if (input.Player.Sprint.controls.Any(c => c.IsPressed()) && !anim.GetBool("Block")) SpeedCalc(direction3, maxSprintSpeed); //Sprint
             else SpeedCalc(direction3, maxSpeed); //Walk
         }
-        if (dashCount >= 1) 
+        if (dashCount >= .6f) 
         {
-            trail.SetActive(true);
+            trail.GetComponent<TrailRenderer>().time = 0.2f;
+            trail.GetComponent<ParticleSystem>().enableEmission = true;
             honk.SetActive(false);
         }
         else
         {
-            trail.SetActive(false);
+            trail.GetComponent<TrailRenderer>().time = 0;
+            trail.GetComponent<ParticleSystem>().enableEmission = false;
             honk.SetActive(true);
         }
         if (dashCount >= 0) dashCount -= Time.deltaTime;

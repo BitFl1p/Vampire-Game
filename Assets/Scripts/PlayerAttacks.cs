@@ -57,7 +57,7 @@ public class PlayerAttacks : MonoBehaviour
     }
     void Vel()
     {
-        GetComponent<CharacterController3D>().speed += .6f;
+        GetComponent<CharacterController3D>().speed += .2f;
         GetComponent<CharacterController3D>().SpeedCalc(transform.forward, 1);
     }
     void ColliderOn()
