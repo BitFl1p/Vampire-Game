@@ -152,7 +152,7 @@ public class CharacterController3D : MonoBehaviour
         }
         else
         {
-            trail.GetComponent<TrailRenderer>().time = 0;
+            trail.GetComponent<TrailRenderer>().time = -0.2f;
             trail.GetComponent<ParticleSystem>().enableEmission = false;
             honk.SetActive(true);
         }
