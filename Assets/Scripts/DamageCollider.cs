@@ -10,6 +10,10 @@ public class DamageCollider : MonoBehaviour
         {
             health.Damage(damage, GetComponent<Collider>(), knockback);
         }
+        if (collision.gameObject.TryGetComponent(out Destructible destructible))
+        {
+            destructible.killed = true;
+        }
     }
 
 }

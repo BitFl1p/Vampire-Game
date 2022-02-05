@@ -147,13 +147,15 @@ public class CharacterController3D : MonoBehaviour
         if (dashCount >= .6f) 
         {
             trail.GetComponent<TrailRenderer>().time = 0.2f;
-            trail.GetComponent<ParticleSystem>().enableEmission = true;
+            var emission = trail.GetComponent<ParticleSystem>().emission;
+            emission.enabled = true;
             honk.SetActive(false);
         }
         else
         {
             trail.GetComponent<TrailRenderer>().time = -0.2f;
-            trail.GetComponent<ParticleSystem>().enableEmission = false;
+            var emission = trail.GetComponent<ParticleSystem>().emission;
+            emission.enabled = false;
             honk.SetActive(true);
         }
         if (dashCount >= 0) dashCount -= Time.deltaTime;
