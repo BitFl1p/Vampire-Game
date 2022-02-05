@@ -19,8 +19,8 @@ TagManager:
   - Enemy
   - Stud
   - Piece
-  - 
-  - 
+  - Obstacle
+  - Ignore Post Processing
   - 
   - 
   - 
