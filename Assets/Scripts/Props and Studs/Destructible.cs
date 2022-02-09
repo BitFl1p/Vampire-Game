@@ -16,20 +16,20 @@ public class Destructible : MonoBehaviour
             destroyed = value;
             if (destroyed == true)
             {
+                GetComponent<Collider>().enabled = false;
+                for (; studCount > 0; studCount--)
+                {
+                    Stud instance = Instantiate(stud, transform.position, Quaternion.Euler(Vector3.zero));
+                    instance.GetComponent<Rigidbody>().velocity = new Vector3(Random.Range(-1.5f, 1.5f), 4f, Random.Range(-1.5f, 1.5f));
+                }
                 foreach (Rigidbody limb in limbs)
                 {
-                    GetComponent<Collider>().enabled = false;
                     limb.velocity = new Vector3(Random.Range(-3f, 3f), 3f, Random.Range(-3f, 3f));
                     limb.drag = 1;
                     limb.angularDrag = 1;
                     limb.isKinematic = false;
                     limb.GetComponent<Collider>().enabled = true;
                     limb.GetComponent<DisappearTimer>().started = true;
-                    for (; studCount > 0; studCount--)
-                    {
-                        Stud instance = Instantiate(stud, transform.position, Quaternion.Euler(Vector3.zero));
-                        instance.GetComponent<Rigidbody>().velocity = new Vector3(Random.Range(-1.5f, 1.5f), 4f, Random.Range(-1.5f, 1.5f));
-                    }
                 }
             }
         }

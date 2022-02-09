@@ -68,5 +68,18 @@ namespace VladsUsefulScripts
             }
             return vector;
         }
+        public static Vector3 ClampedDrag(Vector3 vector, float drag, float min, float max)
+        {
+            if (vector.x > drag) vector.x -= drag;
+            else if (vector.x < -drag) vector.x += drag; 
+            if (vector.z > drag) vector.z -= drag;
+            else if (vector.z < -drag) vector.z += drag;
+            if (vector.x < drag * 1.2 && vector.x > -drag * 1.2 && vector.z < drag * 1.2 && vector.z > -drag * 1.2)
+            {
+                vector.x = 0;
+                return new Vector3(Mathf.Clamp(vector.x, min, max), vector.y, Mathf.Clamp(vector.z, min, max));
+            }
+            return vector;
+        }
     }
 }
