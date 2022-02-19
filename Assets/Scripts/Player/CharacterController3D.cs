@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class CharacterController3D : MonoBehaviour
 {
+    public Slider staminaSlider;
     public GameObject honk;
     public GameObject trail;
     public int studs;
@@ -15,11 +17,11 @@ public class CharacterController3D : MonoBehaviour
     //public CinemachineTargetGroup tGroup;
     public Transform cam, enemy;
     public InputActionReference inputFile;
-    public float turnSmoothTime;
+    public float turnSmoothTime, stamina, maxStamina, staminaRecoveryTime;
     float dashCount;
     public bool lockedOn;
     bool lockLastFrame;
-    [HideInInspector] public float speed;
+    [HideInInspector] public float speed, staminaCount;
     float turnSmoothVelocity;
     bool dashed, dashed2;
     Vector3 moveDir;
@@ -46,6 +48,8 @@ public class CharacterController3D : MonoBehaviour
     #region Setup
     void Start()
     {
+        staminaSlider.maxValue = maxStamina;
+        stamina = maxStamina;
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -68,6 +72,7 @@ public class CharacterController3D : MonoBehaviour
         {
             if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, Mathf.Infinity, cam.gameObject.layer))
             {
+                Debug.Log(hit.collider.gameObject);
                 if (hit.collider.TryGetComponent(out Enemy enemy))
                 {
                     this.enemy = enemy.transform;
@@ -119,6 +124,7 @@ public class CharacterController3D : MonoBehaviour
     }
     void FixedUpdate()
     {
+        float lastFrameStamina = stamina;
         Vector2 localVelocity = new Vector2(Vector3.Dot(rb.velocity, transform.right), Vector3.Dot(rb.velocity, transform.forward)); //figure out velocity relative to the player
         if (dashCount < .6f && anim.GetInteger("Attack") == 0)
         {
@@ -131,8 +137,9 @@ public class CharacterController3D : MonoBehaviour
             direction3 = new Vector3(direction.x, 0, direction.y);
             direction3 = Quaternion.Euler(0, cam.eulerAngles.y, 0) * direction3;
         }
-        if (input.Player.Dash.controls.Any(c => c.IsPressed()) && !dashed && direction3.magnitude > 0) 
+        if (input.Player.Dash.controls.Any(c => c.IsPressed()) && !dashed && direction3.magnitude > 0 && stamina > 0) 
         {
+            stamina -= 20;
             dashed2 = true;
             dashed = true;
             dashCount = .8f;
@@ -141,7 +148,11 @@ public class CharacterController3D : MonoBehaviour
         }
         else
         {
-            if (input.Player.Sprint.controls.Any(c => c.IsPressed()) && !anim.GetBool("Block")) SpeedCalc(direction3, maxSprintSpeed); //Sprint
+            if (input.Player.Sprint.controls.Any(c => c.IsPressed()) && !anim.GetBool("Block") && stamina > 0) 
+            {
+                SpeedCalc(direction3, maxSprintSpeed); //Sprint
+                stamina -= Time.deltaTime * 20;
+            }
             else SpeedCalc(direction3, maxSpeed); //Walk
         }
         if (dashCount >= .6f) 
@@ -161,8 +172,20 @@ public class CharacterController3D : MonoBehaviour
         if (dashCount >= 0) dashCount -= Time.deltaTime;
         else dashed = false;
 
-
-
+        if(lastFrameStamina == stamina)
+        {
+            staminaCount -= Time.deltaTime;
+        }
+        else
+        {
+            staminaCount = staminaRecoveryTime;
+        }
+        if (staminaCount <= 0) 
+        {
+            if (stamina < maxStamina) stamina += Time.deltaTime * 20;
+            else stamina = maxStamina;
+        }
+        staminaSlider.value = stamina >= 0 ? stamina : 0;
         anim.SetFloat("X", Mathf.Lerp(anim.GetFloat("X"), localVelocity.x, turnSmoothTime)); //animation shit
         anim.SetFloat("Y", Mathf.Lerp(anim.GetFloat("Y"), localVelocity.y, turnSmoothTime));
     }

@@ -6,6 +6,7 @@ public class DamageCollider : MonoBehaviour
     public int damage, knockback;
     protected virtual void OnTriggerEnter(Collider collision)
     {
+        if (collision.isTrigger) return;
         if (collision.gameObject.TryGetComponent(out Health health))
         {
             health.Damage(damage, GetComponent<Collider>(), knockback);
